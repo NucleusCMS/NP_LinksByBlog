@@ -21,7 +21,7 @@ class NP_LinksByBlog extends NucleusPlugin {
     function doSkinVar($skinType, $what = 'list') {
         global $CONF, $member, $blog;
         $actionURL = $CONF['ActionURL'];
-        if(!$blogid) return;
+        if(!$blog) return;
         $blogid = $blog->getID();
         $query = "SELECT id,title,url,description FROM nucleus_plug_linksbyblog WHERE blogid = $blogid ORDER BY title";
         $links = sql_query ($query);
