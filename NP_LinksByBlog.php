@@ -21,11 +21,11 @@ class NP_LinksByBlog extends NucleusPlugin {
     function doSkinVar($skinType, $what = 'list') {
         global $CONF, $member, $blog;
         $actionURL = $CONF['ActionURL'];
-        if(!$blog) return;
-        $blogid = $blog->getID();
+        if(is_object($blog)) $blogid = $blog->getID();
+        else                 $blogid = $CONF['DefaultBlog'];
         $query = "SELECT id,title,url,description FROM nucleus_plug_linksbyblog WHERE blogid = $blogid ORDER BY title";
         $links = sql_query ($query);
-        $AdminLogon = $member->isLoggedIn() && $member->blogAdminRights($blog->getID());
+        $AdminLogon = $member->isLoggedIn() && $member->blogAdminRights($blogid);
         if (sql_num_rows($links) > 0){
             echo '<ul class="nobullets">';
             while ($link = sql_fetch_object($links)){
@@ -38,7 +38,7 @@ class NP_LinksByBlog extends NucleusPlugin {
             echo "</ul>";
         }
         if ($AdminLogon){
-          echo '<div style = "border-top: 1px dotted black;margin-top: 10px"><b>Add A Link</b>';
+          echo '<div style = "border-top: 1px dotted #666666;margin-top: 10px"><b>Add A Link</b>';
           $this->showAddForm($blogid);
           echo '</div>';
         }
@@ -62,7 +62,7 @@ class NP_LinksByBlog extends NucleusPlugin {
                 $description = sql_real_escape_string($description);
                 $url = requestVar('url');
                 $url = sql_real_escape_string($url);
-                $HasHTTP = strpos($url,'http://').'' ; 
+                $HasHTTP = strpos($url,'http://');
                 
                 if ($HasHTTP === false) $url = "http://".$url;
                 
